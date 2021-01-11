@@ -12,7 +12,7 @@ Then run
 docker-compose up
 ```
 
-The input db host for TeamCity will be: SQLServer,1433
+The input db host for TeamCity will be: SQLServer:1433
 Instance: please keep it blank, by default the SQL Server container has been up using Developer Edition
 Using SSMS or sqlcommand if you would to create a new database name TeamCity or what ever you like. Then input to Database name field
-Use authenticate with account: user & password
+Use authenticate mode by login & password
