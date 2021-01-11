@@ -1,0 +1,51 @@
+version: "3"
+services:
+  SQLServer:
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 14433:1433
+    volumes:
+      - ${SQL_VOLUME}:/var/opt/mssql/data
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+      - MSSQL_PID=Developer
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/opt/mssql-tools/bin/sqlcmd",
+          "-U",
+          "sa",
+          "-P",
+          "${SA_PASSWORD}",
+          "-Q",
+          "select 1",
+        ]
+      interval: 10s
+      retries: 10
+
+  TeamCity:
+    image: jetbrains/teamcity-server
+    ports:
+      - 20100:8111
+    volumes:
+      - D:\Programming\teamcity\data:/data/teamcity_server/datadir
+      - D:\Programming\teamcity\logs:/opt/teamcity/logs
+
+  Octopus:
+    image: octopusdeploy/octopusdeploy
+    ports:
+      - 20200:8080
+      - 20210:10943
+    environment:
+      - ACCEPT_EULA=Y
+      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
+    volumes:
+      - ${OCTOPUS_REPOSITORY}:/repository
+      - ${OCTOPUS_ARTIFACTS}:/artifacts
+      # - ${OCTOPUS_TASKLOGS}:/taskLogs
+      # - ${OCTOPUS_CACHE}:/cache
+      # - ${OCTOPUS_IMPORT}:/import
+    depends_on:
+      - SQLServer
